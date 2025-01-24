@@ -1,7 +1,7 @@
 
 import { applyDecorators, Controller, UseGuards, } from "@nestjs/common";
 import { EPath } from "src/common/EPath";
-import { AdminGuard } from "src/guard/AdminGuard";
+import { AdminGuard } from "src/guard/adminGuard";
 
 export function ControllerMin(prefix: string) {
     return applyDecorators(Controller(`${EPath.min}${prefix}`));

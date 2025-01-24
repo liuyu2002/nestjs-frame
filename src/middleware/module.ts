@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 
-import { RateLimitMiddleware } from "./rateLimitMiddleware";
 
 
 @Module({
@@ -13,7 +12,7 @@ import { RateLimitMiddleware } from "./rateLimitMiddleware";
 export class ModulesMiddleware implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
-        .apply(RateLimitMiddleware)
+        .apply()
         .forRoutes('*'); // 应用到所有路由
     }
 }

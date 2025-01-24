@@ -1,4 +1,11 @@
-import { BadRequestException, ForbiddenException, HttpException, HttpStatus, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { 
+    BadRequestException, 
+    ForbiddenException, 
+    HttpException, 
+    HttpStatus, 
+    NotFoundException, 
+    UnauthorizedException 
+} from '@nestjs/common';
 import { ERROR_MESSAGES } from 'src/constants/EMessage';
 
 export class ErrorResponseBuilder {
@@ -12,11 +19,16 @@ export class ErrorResponseBuilder {
 
         if (exception instanceof HttpException) {
             const response = exception.getResponse();
-            if (typeof response === 'object' && (response as any).message) {
-                errorMessage = Array.isArray((response as any).message)
-                    ? (response as any).message.join(', ')
-                    : (response as any).message;
-            } else if (exception instanceof BadRequestException) {
+            // 处理 `response` 为字符串或对象的情况
+            if (typeof response === 'string') {
+                errorMessage = response;
+            } else if (typeof response === 'object') {
+                // 解析嵌套消息
+                errorMessage = this.extractMessage(response);
+            }
+
+            // 针对具体异常类型的错误消息覆盖
+            if (exception instanceof BadRequestException) {
                 errorMessage = ERROR_MESSAGES.BAD_REQUEST;
             } else if (exception instanceof UnauthorizedException) {
                 errorMessage = ERROR_MESSAGES.UNAUTHORIZED;
@@ -34,5 +46,15 @@ export class ErrorResponseBuilder {
             requestId,
             timestamp: Date.now(),
         };
+    }
+
+    // 提取错误消息的辅助方法
+    private static extractMessage(response: any): string {
+        if (response.message) {
+            return Array.isArray(response.message)
+                ? response.message.join(', ')
+                : response.message;
+        }
+        return response.error || ERROR_MESSAGES.DEFAULT;
     }
 }
