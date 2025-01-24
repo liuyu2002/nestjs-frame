@@ -6,6 +6,7 @@ import { MRequest } from '../request';
 import { PALogin } from './params';
 import { ControllerAdmin } from 'src/modules/min/minController';
 import { SkipAuth } from 'src/decorators/skipAuth';
+import { RateLimit } from 'src/decorators/rateLimit';
 
 @ApiTags(`${EPath.admin}:登陆`)
 @ControllerAdmin('login')
@@ -15,6 +16,7 @@ export class Controller {
 
     //登录
     @SkipAuth()
+    @RateLimit(1, 1)
     @ApiOperation({ summary: '登录' })
     @Post()
     codeLogin(@Body() params: PALogin) {

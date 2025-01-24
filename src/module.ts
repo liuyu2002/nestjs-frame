@@ -9,8 +9,8 @@ import { AllExceptionsFilter } from './httpException/allExceptionsFilter';
 import { RequestMetric } from './entities/requestMetric';
 import { ErrorLog } from './entities/errorLog';
 import { ModulesAdmin } from './modules/admin/modules';
-import { RateLimitInterceptor } from './interceptor/rateLimitInterceptor ';
-import { LoggingAspect } from './logger/loggingAspect';
+import { LoggingInterceptor } from './interceptor/rateLimitInterceptor ';
+import { ModulesMiddleware } from './middleware/module';
 
 @Module({
   imports: [
@@ -21,14 +21,12 @@ import { LoggingAspect } from './logger/loggingAspect';
     TypeOrmModule.forRoot(CMysql),
     TypeOrmModule.forFeature([SensorData,RequestMetric,ErrorLog]),
     ...ModulesAdmin,
+    ModulesMiddleware
   ],
   controllers: [],
   providers: [{
     provide: APP_INTERCEPTOR,
-    useClass: LoggingAspect,
-},{
-    provide: APP_INTERCEPTOR,
-    useClass: RateLimitInterceptor,
+    useClass: LoggingInterceptor,
 },ErrorLogService, // 注册 ErrorLogService
 {
     provide: APP_FILTER, // 全局注册异常处理器
