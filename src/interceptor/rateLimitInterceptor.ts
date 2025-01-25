@@ -33,11 +33,14 @@ import { RedisService } from 'utils/redis/redisService';
         'RATE_LIMIT_KEY',
         context.getHandler(),
       );
-      const userId = context.switchToHttp().getRequest().userInfo.id;
-      console.log('userId', context.switchToHttp().getRequest().userInfo);
-      if(userId){
-        //更新redis中的活动时间
-        await this.redisService.set(`ws:activity:${userId}`, Date.now().toString());
+      try{
+        const userId = context.switchToHttp().getRequest().userInfo.id;
+        if(userId){
+          //更新redis中的活动时间
+          await this.redisService.set(`ws:activity:${userId}`, Date.now().toString());
+        }
+      }catch(e){
+        
       }
       if (!rateLimit) {
         // 如果没有设置限流装饰器，直接放行
