@@ -1,5 +1,5 @@
 import { Get, Param, Post, Body, Query, Res, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Service } from './service'
 import { EPath } from 'src/common/EPath';
 import { MRequest } from '../request';
@@ -10,7 +10,7 @@ import { RateLimit } from 'src/decorators/rateLimit';
 
 @ApiTags(`${EPath.admin}:登陆`)
 @ControllerAdmin('login')
-
+@ApiBearerAuth()
 export class Controller {
     constructor(private readonly service: Service) { }
 
@@ -21,6 +21,13 @@ export class Controller {
     @Post()
     codeLogin(@Body() params: PALogin) {
         return this.service.login(params);
+    }
+
+    //测试
+    @ApiOperation({ summary: '测试' })
+    @Get('test')
+    test(@Req() req: MRequest) {
+        return 123;
     }
 
 }

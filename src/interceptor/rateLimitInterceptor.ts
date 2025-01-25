@@ -8,13 +8,17 @@ import {
   } from '@nestjs/common';
   import { Reflector } from '@nestjs/core';
   import { Observable } from 'rxjs';
+import { RedisService } from 'utils/redis/redisService';
   
   // 内存中的限流存储
   const rateLimitStorage = new Map<string, { count: number; expiresAt: number }>();
   
   @Injectable()
   export class RateLimitInterceptor implements NestInterceptor {
-    constructor(private readonly reflector: Reflector) {setInterval(() => {
+    constructor(
+      private readonly reflector: Reflector,
+      private readonly redisService: RedisService,
+    ) {setInterval(() => {
         const now = Date.now();
         for (const [key, value] of rateLimitStorage.entries()) {
           if (value.expiresAt <= now) {
@@ -24,16 +28,23 @@ import {
       }, 60 * 1000); // 每分钟清理一次
       }
   
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
       const rateLimit = this.reflector.get<{ limit: number; ttl: number }>(
         'RATE_LIMIT_KEY',
         context.getHandler(),
       );
-  
+      const userId = context.switchToHttp().getRequest().userInfo.id;
+      console.log('userId', context.switchToHttp().getRequest().userInfo);
+      if(userId){
+        //更新redis中的活动时间
+        await this.redisService.set(`ws:activity:${userId}`, Date.now().toString());
+      }
       if (!rateLimit) {
         // 如果没有设置限流装饰器，直接放行
         return next.handle();
       }
+
+      
   
       const { limit, ttl } = rateLimit;
       const req = context.switchToHttp().getRequest();

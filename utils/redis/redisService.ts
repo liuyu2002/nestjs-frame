@@ -7,7 +7,7 @@ const moment = require('moment');
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
     private client: Redis.Redis;
-    private readonly key = 'sequence';
+    private readonly key = process.env.APP_NAME || 'counter';
     constructor() {
         console.log('RedisService instance created');
     }
@@ -54,6 +54,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     async get(key: string): Promise<string | null> {
         return this.client.get(key);
     }
+
+    /** 删除键 */
+    async delete(key: string): Promise<void> {
+        await this.client.del(key);
+      }
 
     /** 自增数值 */
     async incr(key: string): Promise<number> {

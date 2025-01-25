@@ -16,7 +16,7 @@ export class Service {
 
     constructor(
         @InjectRepository(Admin)
-        private readonly repoUser: Repository<Admin>,
+        private readonly repoAdmin: Repository<Admin>,
         private readonly redisService: RedisService,
         public readonly jwtService: JwtService,
         public readonly wechatUtil: WechatUtilService
@@ -24,7 +24,15 @@ export class Service {
 
 
     async login(params: PALogin) {
-        return 123
+        const user = await this.repoAdmin.findOne({ where: { account: params.account} });
+        if (!user) {
+            throw new BadRequestException('用户不存在');
+        }
+        if (user.password !== params.password) {
+            throw new BadRequestException('密码错误');
+        }
+        const token = this.jwtService.sign({ id: user.id, platform: EPlatform.Admin });
+        return { token, user: user };
     }
 
 
