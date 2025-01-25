@@ -12,6 +12,8 @@ import { ModulesAdmin } from './modules/admin/modules';
 import { LoggingInterceptor } from './interceptor/loggingInterceptor';
 import { ModulesMiddleware } from './middleware/module';
 import { RateLimitInterceptor } from './interceptor/rateLimitInterceptor';
+import { WebSocketModule } from './websocket/module';
+import { MqttModule } from './mqtt/module';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { RateLimitInterceptor } from './interceptor/rateLimitInterceptor';
     TypeOrmModule.forRoot(CMysql),
     TypeOrmModule.forFeature([SensorData,RequestMetric,ErrorLog]),
     ...ModulesAdmin,
-    ModulesMiddleware
+    ModulesMiddleware,
+    WebSocketModule,
+    MqttModule
   ],
   controllers: [],
   providers: [{

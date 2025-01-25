@@ -1,6 +1,3 @@
-## 项目目录结构
-
-```
 liuyu_frame/
 │
 ├── .env                   # 环境变量配置文件
@@ -10,6 +7,7 @@ liuyu_frame/
 ├── README.md              # 项目说明文档
 ├── nest-cli.json          # Nest.js CLI 配置
 ├── package.json           # 项目依赖和脚本
+├── tsconfig.build.json    # TypeScript 构建配置
 ├── tsconfig.json          # TypeScript 配置文件
 │
 ├── src/                   # 源代码目录
@@ -26,6 +24,14 @@ liuyu_frame/
 │   ├── interceptor/       # 拦截器
 │   ├── logger/            # 日志模块
 │   └── modules/           # 业务模块
+│       ├── mqtt/          # MQTT 模块
+│       │   ├── mqtt.module.ts
+│       │   ├── mqtt.service.ts
+│       │   └── interfaces/ # MQTT 相关接口定义
+│       └── websocket/     # WebSocket 模块
+│           ├── websocket.module.ts
+│           ├── websocket.gateway.ts
+│           └── interfaces/ # WebSocket 相关接口定义
 │
 ├── utils/                 # 工具函数目录
 │   ├── error/             # 错误处理工具
@@ -37,14 +43,5 @@ liuyu_frame/
 │   └── wechat/            # 微信相关工具
 │
 ├── dist/                  # 编译输出目录
+├── logs/                  # 日志目录
 └── node_modules/          # 依赖包目录
-```
-
-### 目录说明
-
-- `src/`: 项目的主要源代码目录
-- `utils/`: 通用工具函数和帮助类
-- `configs/`: 项目配置文件
-- `modules/`: 业务模块目录
-- `entities/`: 数据实体定义
-- `common/`: 公共模块和共享代码

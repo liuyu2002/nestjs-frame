@@ -19,8 +19,8 @@ import * as path from 'path';
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
     private readonly logger = new Logger(AllExceptionsFilter.name, { timestamp: true });
-    private readonly logDir = process.env.LOG_DIR || path.join(__dirname, '../../logs'); // 从环境变量中读取日志目录
-    constructor(private readonly errorLogService: ErrorLogService) { }
+    private readonly logDir = process.env.LOG_DIR || path.join(__dirname, '../../logs'); 
+    constructor() { }
 
     async catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp();

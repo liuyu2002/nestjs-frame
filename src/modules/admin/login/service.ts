@@ -10,13 +10,14 @@ import { PALogin } from './params';
 import { User } from 'src/entities/user';
 import { Admin } from 'src/entities/admin';
 import { WechatUtilService } from 'utils/wechat/wechat';
+import { RedisService } from 'utils/redis/redisService';
 @Injectable()
 export class Service {
 
     constructor(
         @InjectRepository(Admin)
         private readonly repoUser: Repository<Admin>,
-
+        private readonly redisService: RedisService,
         public readonly jwtService: JwtService,
         public readonly wechatUtil: WechatUtilService
     ) { }
