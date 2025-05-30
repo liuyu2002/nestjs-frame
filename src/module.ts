@@ -1,9 +1,9 @@
-import { CacheInterceptor, Module } from '@nestjs/common';
+import { CacheInterceptor, Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CMysql } from './configs/CMysql';
 import { CTimescaleDB } from './configs/CTimescaleDB';
 import { SensorData } from './entities/TSDB/sensor';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ErrorLogService } from './httpException/errorLogService';
 import { AllExceptionsFilter } from './httpException/allExceptionsFilter';
 import { RequestMetric } from './entities/requestMetric';
@@ -14,31 +14,59 @@ import { ModulesMiddleware } from './middleware/module';
 import { RateLimitInterceptor } from './interceptor/rateLimitInterceptor';
 import { WebSocketModule } from './websocket/module';
 import { MqttModule } from './mqtt/module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TransformInterceptor } from './interceptor/transformInterceptor';
+import { MonitorModule } from './monitor/monitor.module';
+import { PerformanceInterceptor } from './interceptor/performanceInterceptor';
+import { getRedisConfig } from './configs/redis.config';
 
 @Module({
   imports: [
-    // TypeOrmModule.forRoot({
-    //   ...CTimescaleDB,
-    //   entities: [SensorData]
-    // }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => getRedisConfig(configService),
+      inject: [ConfigService],
+    }),
     TypeOrmModule.forRoot(CMysql),
-    TypeOrmModule.forFeature([SensorData,RequestMetric,ErrorLog]),
+    TypeOrmModule.forFeature([SensorData, RequestMetric, ErrorLog]),
     ...ModulesAdmin,
     ModulesMiddleware,
     WebSocketModule,
-    MqttModule
+    MqttModule,
+    MonitorModule,
   ],
   controllers: [],
-  providers: [{
-    provide: APP_INTERCEPTOR,
-    useClass: LoggingInterceptor,
-},ErrorLogService, // 注册 ErrorLogService
-{
-    provide: APP_FILTER, // 全局注册异常处理器
-    useClass: AllExceptionsFilter,
-},{
-  provide: APP_INTERCEPTOR,
-  useClass: RateLimitInterceptor,
-},],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RateLimitInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PerformanceInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+    ErrorLogService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}

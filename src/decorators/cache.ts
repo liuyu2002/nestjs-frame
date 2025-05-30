@@ -1,4 +1,8 @@
+// src/cache/cache.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 
-export const CACHE_KEY = 'cache'; // 元数据键
-export const Cache = (ttl: number) => SetMetadata(CACHE_KEY, ttl);   //@Cache(60) 缓存60秒
+/**
+ * 自定义缓存装饰器
+ * @param ttl 过期时间（秒）
+ */
+export const UseCache = (ttl: number = 300) => SetMetadata('cacheTTL', ttl);

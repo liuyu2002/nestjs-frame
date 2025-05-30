@@ -1,40 +1,25 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('request_metrics')
+@Entity()
 export class RequestMetric {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    method: string;
+    path: string;
 
     @Column()
-    path: string;
+    method: string;
+
+    @Column('float')
+    duration: number;
 
     @Column()
     statusCode: number;
 
-    @Column('int')
-    duration: number;
-
     @Column({ nullable: true })
-    userId?: number;
+    error: string;
 
-    @Column()
-    userIp: string;
-
-    @Column('text', { nullable: true })
-    requestBody?: string;
-
-    @Column('text', { nullable: true })
-    responseBody?: string;
-
-    @Column('text', { nullable: true })
-    error?: string;
-
-    @CreateDateColumn({
-        comment: '创建时间',
-        name: 'created_at',
-    })
-    created_at: Date;
+    @CreateDateColumn()
+    timestamp: Date;
 }
