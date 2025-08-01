@@ -1,24 +1,25 @@
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { Module} from '@nestjs/common';
-import * as redisStore from 'cache-manager-redis-store'; // 安装依赖：npm install cache-manager-redis-store
+import { CacheInterceptor, CacheModule as NestCacheModule } from '@nestjs/cache-manager';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { getRedisConfig } from '../../configs/redis.config';
 
 @Module({
   imports: [
-    // 注册缓存模块，使用 Redis 存储
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost', // Redis 服务器地址，根据实际情况修改
-      port: 6379,        // Redis 端口
-      ttl: 5,            // 默认缓存时间（单位秒）
+    ConfigModule,
+    NestCacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => getRedisConfig(configService),
+      inject: [ConfigService],
     }),
   ],
   providers: [
-    // 全局缓存拦截器
     {
-      provide: 'APP_INTERCEPTOR',
+      provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
     },
   ],
-  exports: [CacheModule],
+  exports: [NestCacheModule],
 })
-export class CacheModule {}
+export class CustomCacheModule {}
