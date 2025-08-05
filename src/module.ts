@@ -20,6 +20,8 @@ import { TransformInterceptor } from './interceptor/transformInterceptor';
 import { MonitorModule } from './monitor/monitor.module';
 import { PerformanceInterceptor } from './interceptor/performanceInterceptor';
 import { getRedisConfig } from './configs/redis.config';
+import { GlobalJwtModule } from './common/global/jwt.module';
+import { EntitiesModule } from './entities/entities.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { getRedisConfig } from './configs/redis.config';
     WebSocketModule,
     MqttModule,
     MonitorModule,
+    GlobalJwtModule,
+    EntitiesModule
   ],
   controllers: [],
   providers: [

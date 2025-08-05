@@ -16,7 +16,6 @@ import { RequestMetric } from 'src/entities/requestMetric';
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, Admin,ErrorLog,RequestMetric]),
-        JwtModule.register(CJwt),
         WechatModule,
         RedisModule
     ],
