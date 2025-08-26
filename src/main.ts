@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CDebug, CPort } from './configs/CConfig';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 import * as express from 'express';
 
 async function bootstrap() {
