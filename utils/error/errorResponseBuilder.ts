@@ -28,15 +28,14 @@ export class ErrorResponseBuilder {
             }
 
             // 针对具体异常类型的错误消息覆盖
-            if (exception instanceof BadRequestException) {
-                errorMessage = ERROR_MESSAGES.BAD_REQUEST;
-            } else if (exception instanceof UnauthorizedException) {
+            if (exception instanceof UnauthorizedException) {
                 errorMessage = ERROR_MESSAGES.UNAUTHORIZED;
             } else if (exception instanceof ForbiddenException) {
                 errorMessage = ERROR_MESSAGES.FORBIDDEN;
             } else if (exception instanceof NotFoundException) {
                 errorMessage = ERROR_MESSAGES.NOT_FOUND;
             }
+            // BadRequestException 保持原有的具体错误信息，不覆盖
         }
 
         return {
@@ -45,6 +44,7 @@ export class ErrorResponseBuilder {
             errorCode: statusCode,
             requestId,
             timestamp: Date.now(),
+            stack: exception instanceof Error ? exception.stack : null,
         };
     }
 

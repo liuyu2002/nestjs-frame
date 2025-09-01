@@ -21,7 +21,9 @@ import { MonitorModule } from './monitor/monitor.module';
 import { PerformanceInterceptor } from './interceptor/performanceInterceptor';
 import { getRedisConfig } from './configs/redis.config';
 import { GlobalJwtModule } from './common/global/jwt.module';
+import { GuardModule } from './guard/module';
 import { EntitiesModule } from './entities/entities.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -35,14 +37,15 @@ import { EntitiesModule } from './entities/entities.module';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot(CMysql),
-    TypeOrmModule.forFeature([SensorData, RequestMetric, ErrorLog]),
     ...ModulesAdmin,
     ModulesMiddleware,
     WebSocketModule,
     MqttModule,
     MonitorModule,
     GlobalJwtModule,
-    EntitiesModule
+    GuardModule,
+    EntitiesModule,
+    HealthModule
   ],
   controllers: [],
   providers: [
@@ -64,7 +67,11 @@ import { EntitiesModule } from './entities/entities.module';
     },
     {
       provide: APP_PIPE,
-      useClass: ValidationPipe,
+      useFactory: () => new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
     },
     ErrorLogService,
     {

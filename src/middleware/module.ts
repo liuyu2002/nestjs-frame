@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { RequestIdMiddleware } from "./requestId.middleware";
 
 
 
@@ -12,7 +13,7 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 export class ModulesMiddleware implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
-        .apply()
+        .apply(RequestIdMiddleware)
         .forRoutes('*'); // 应用到所有路由
     }
 }
