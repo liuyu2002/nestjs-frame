@@ -1,7 +1,7 @@
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm"
+import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, BaseEntity } from "typeorm"
 
 
-export class Base { //基础表 用于继承
+export class Base extends BaseEntity{ //基础表 用于继承
     @PrimaryGeneratedColumn({
         comment: '主键-自增',
     })

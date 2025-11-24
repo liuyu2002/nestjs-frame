@@ -14,6 +14,22 @@ export class RequestMetric {
     @Column('float')
     duration: number;
 
+    //请求参数
+    @Column({ nullable: true,type:'json' })
+    requestParams: any;
+
+    //响应参数
+    @Column({ nullable: true,type:'json' })
+    responseParams: any;
+
+    //ip
+    @Column({ nullable: true })
+    ip: string;
+
+    //用户id    
+    @Column({ nullable: true })
+    userId: number;
+
     @Column()
     statusCode: number;
 

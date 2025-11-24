@@ -11,7 +11,7 @@ export class PerformanceInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
         const startTime = performance.now();
-
+        const userInfo = request.userInfo;
         return next.handle().pipe(
             tap({
                 next: (data) => {
@@ -22,6 +22,11 @@ export class PerformanceInterceptor implements NestInterceptor {
                         startTime,
                         endTime,
                         200,
+                        undefined,
+                        JSON.stringify(request.body),
+                        JSON.stringify(data),
+                        request.ip,
+                        userInfo?.id,
                     );
                 },
                 error: (error) => {
@@ -33,6 +38,10 @@ export class PerformanceInterceptor implements NestInterceptor {
                         endTime,
                         error.status || 500,
                         error.message,
+                        JSON.stringify(request.body),
+                        undefined,
+                        request.ip,
+                        userInfo?.id,
                     );
                 },
             }),

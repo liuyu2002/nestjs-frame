@@ -95,7 +95,7 @@ export class LoggingInterceptor implements NestInterceptor {
     private logResponse(request: Request, statusCode: number, duration: number, responseBody: any) {
         const logMessage = `${new Date().toISOString()} - ${request.method} ${request.url} ${statusCode} - ${duration / 1000}秒
 响应数据: ${JSON.stringify(responseBody)}\n\n`;
-        this.logger.log(logMessage.trim());
+      //  this.logger.log(logMessage.trim());
         this.writeLogToFile('log', logMessage);
     }
 

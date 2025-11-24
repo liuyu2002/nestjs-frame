@@ -20,6 +20,10 @@ export class PerformanceService {
         endTime: number,
         statusCode: number,
         error?: string,
+        requestParams?: string,
+        responseParams?: string,
+        ip?: string,
+        userId?: number,
     ) {
         const duration = endTime - startTime;
         const metric = this.requestMetricRepository.create({
@@ -29,9 +33,20 @@ export class PerformanceService {
             statusCode,
             error,
             timestamp: new Date(),
+            requestParams,
+            responseParams,
+            ip,
+            userId,
         });
 
         try {
+            //如果返回值的长度小于200，保存
+            if(responseParams && responseParams.length < 200){
+                metric.responseParams = responseParams;
+            }else{
+                metric.responseParams = '响应参数过长，不予保存,请于文件日志中查看';
+            }
+            
             await this.requestMetricRepository.save(metric);
         } catch (error) {
             this.logger.error(`Failed to save request metric: ${error.message}`);

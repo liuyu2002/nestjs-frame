@@ -24,6 +24,7 @@ import { GlobalJwtModule } from './common/global/jwt.module';
 import { GuardModule } from './guard/module';
 import { EntitiesModule } from './entities/entities.module';
 import { HealthModule } from './modules/health/health.module';
+import { ServicesModule } from './common/services/services.module';
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import { HealthModule } from './modules/health/health.module';
     GlobalJwtModule,
     GuardModule,
     EntitiesModule,
-    HealthModule
+    HealthModule,
+    ServicesModule
   ],
   controllers: [],
   providers: [
