@@ -23,7 +23,7 @@ export enum EMessage {
 
 }
 
-// src/constants/errorMessages.ts
+// 错误消息常量定义
 export const ERROR_MESSAGES = {
     DEFAULT: '服务器内部错误，请稍后重试',
     BAD_REQUEST: '请求参数错误',
