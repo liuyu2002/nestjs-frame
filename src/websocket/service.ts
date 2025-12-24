@@ -16,8 +16,10 @@ export class WebSocketService implements OnGatewayInit, OnGatewayConnection, OnG
   @WebSocketServer()
   server: Server;
 
-  private readonly MAX_IDLE_TIME = Number(process.env.WS_MAX_IDLE_TIME)  * 1000; // 最大闲置时间（30分钟）
-  private readonly CHECK_INTERVAL = Number(process.env.WS_CHECK_INTERVAL) * 1000; // 检查间隔（5分钟）
+  private readonly MAX_IDLE_TIME =
+    (Number(process.env.WS_MAX_IDLE_TIME) || 1800) * 1000; // 最大闲置时间（默认30分钟）
+  private readonly CHECK_INTERVAL =
+    (Number(process.env.WS_CHECK_INTERVAL) || 300) * 1000; // 检查间隔（默认5分钟）
   private idleCheckInterval: NodeJS.Timeout;
 
   constructor(private readonly redisService: RedisService) {}
@@ -102,7 +104,10 @@ export class WebSocketService implements OnGatewayInit, OnGatewayConnection, OnG
           const clientId = await this.redisService.get(`ws:user:${userId}`);
           if (clientId) {
             this.server.to(clientId).emit('force-disconnect', '由于长时间未进行数据操作，您已被强制下线。');
-            this.server.sockets.sockets.get(clientId).disconnect(true);
+            const socket = this.server.sockets.sockets.get(clientId);
+            if (socket) {
+              socket.disconnect(true);
+            }
             await this.redisService.delete(`ws:user:${userId}`);
             await this.redisService.delete(`ws:client:${clientId}`);
             await this.redisService.delete(`ws:activity:${userId}`);

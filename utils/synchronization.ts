@@ -3,17 +3,17 @@ import { readdirSync, statSync, mkdirSync, unlinkSync, copyFileSync, existsSync,
 import { getFileMd5 } from "./fileMd5"
 
 
-export async function asyncfiles(srcDir: string, tarDir: string) {
-    await copyCommon(srcDir, tarDir)
-    deleteCommon(srcDir, tarDir)
+export async function asyncfiles(srcDir: string, targetDir: string) {
+    await copyCommon(srcDir, targetDir)
+    deleteCommon(srcDir, targetDir)
 }
 
 
-export async function copyCommon(srcDir: string, tarDir: string) {
+export async function copyCommon(srcDir: string, targetDir: string) {
     const files = readdirSync(srcDir)
     for (const file of files) {
         const srcPath: string = path.join(srcDir, file)
-        const tarPath: string = path.join(tarDir, file)
+        const tarPath: string = path.join(targetDir, file)
         const stats = statSync(srcPath)
         if (stats.isDirectory()) {
             try {
@@ -34,11 +34,11 @@ export async function copyCommon(srcDir: string, tarDir: string) {
     }
 }
 
-export function deleteCommon(srcDir: string, tarDir: string) {
-    const files = readdirSync(tarDir)
+export function deleteCommon(srcDir: string, targetDir: string) {
+    const files = readdirSync(targetDir)
     for (const file of files) {
         const srcPath: string = path.join(srcDir, file)
-        const tarPath: string = path.join(tarDir, file)
+        const tarPath: string = path.join(targetDir, file)
         if (!existsSync(srcPath)) {
             const stats = statSync(tarPath)
             if (stats.isDirectory()) {
@@ -46,7 +46,7 @@ export function deleteCommon(srcDir: string, tarDir: string) {
             } else {
                 unlinkSync(tarPath)
             }
-            break
+            continue
         }
         const stats = statSync(tarPath)
         if (stats.isDirectory()) {

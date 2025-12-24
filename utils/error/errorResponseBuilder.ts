@@ -6,7 +6,7 @@ import {
     NotFoundException, 
     UnauthorizedException 
 } from '@nestjs/common';
-import { ERROR_MESSAGES } from 'src/constants/EMessage';
+import { ERROR_MESSAGES } from '../../src/constants/EMessage';
 
 export class ErrorResponseBuilder {
     static build(exception: unknown, requestId: string) {
